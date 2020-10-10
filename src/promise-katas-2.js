@@ -1,3 +1,4 @@
+const fakeApi = require("./fakeApi");
 const { getData } = require("./fakeApi");
 /* 
 
@@ -11,18 +12,33 @@ You can look at the fakeApi to see how the data is returned
 
 // 1 Create a function that uses the getData function to make a request to the "food" URL and returns
 // the data - expected return value "Cheese" of type String
+const food = () => {
+    /* solution 1:
+    const food = "food";
+    return fakeApi.getData(food).then(({data}) => data);
+    solution 2:*/
+    return fakeApi.getData("food").then(response => response.data);
+};
 
-const food = () => {};
 
 // 2 Create a function that uses the getData function to make a request to the "cats" URL and returns
 // a list of cats in alphabetical order - expected return value ["Bandit", "Berry", "Puss in boots", "Smokey"] of type Array
 
-const cat = () => {};
+const cat = () => {
+    return fakeApi.getData("cats").then(({data}) => data.cats.sort());
+
+};
 
 // 3 Create a function that uses the getData function to make a request to the "dogs" URL and returns
 // the naughtiest dog - expected return value {name: "Mutley", naughty: 10} of type Object
 
-const dog = () => {};
+const dog = () => {
+    return fakeApi.getData("dogs")
+    .then(({data}) => data.dogs.reduce((first, second) => {
+        if (first.naughty > second.naughty) return first;
+        return second;
+    }));
+};
 
 // 4 Create a function that uses the getData function to make requests to the "jokes" URL and returns
 // a joke object with the key of question and answer - expected return { 
@@ -30,7 +46,14 @@ const dog = () => {};
 //     answer: "Because he was out-standing in his field."
 // } of type Object
 
-const joke = () => {};
+const joke = () => Promise.all([
+    getData("jokes", "question"),
+    getData("jokes", "answer")
+])
+.then(([one, two]) => {
+    return { question: one.joke, answer: two.answer };
+});
+
 
 module.exports = {
     food,
